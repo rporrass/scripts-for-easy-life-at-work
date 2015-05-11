@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+
+use File::Basename;
+push(@INC, dirname($0));
+require  "script-commons.pl";
+
+clrscr();
+
+print("You're going to update your local branch and master with the latest in the remote repository\n");
+verifycontinue();
+print("\n");
+
+my $branch = branchname();
+
+if(needtocommit()){
+	my $jira = jiraticket($branch);
+	gitaddfiles();
+	print("\n");
+	my $msg = validatecommitmessage($jira, $ARGV[0]);
+	gitcommit($msg);
+}
+
+gitcheckout();
+gitpull();
+gitcheckout($branch);
+gitmerge();

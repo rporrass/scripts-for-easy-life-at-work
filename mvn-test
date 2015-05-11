@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+
+use File::Basename;
+push(@INC, dirname($0));
+require  "script-commons.pl";
+
+clrscr();
+prompt("mvn -U -settings settings.xml clean test");

@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+
+use File::Basename;
+push(@INC, dirname($0));
+require  "script-commons.pl";
+
+clrscr();
+
+print("You're going to remove all local branches which are not in the remote repository\n");
+verifycontinue();
+
+gitcheckout();
+gitpull();
+my $cmd = `git remote prune origin`;
+$cmd = `git branch --all`;
+
+my @remoteBs;
+my @localBs;
+
+my @values = split("\n", $cmd);
+
+foreach my $val (@values) {
+  $val =~ s/^\s+//;
+  if($val =~ m/^remotes\//){
+    $val =~ s/remotes\/(\w?\d?)+\///;
+	if( !(($val =~ m/^master$/) || ($val =~ m/^HEAD -\>/))){
+      push(@remoteBs, $val);
+	}
+  }
+  else{
+	if( !($val =~ m/^\* master$/)){
+      push(@localBs, $val);
+	}
+  }
+}
+
+foreach my $branch (@localBs) {
+  if(!($branch ~~ @remoteBs)){
+    $cmd = `git branch -d $branch`;
+    if($cmd eq ""){
+	  exit(1);
+    }
+  }
+}
