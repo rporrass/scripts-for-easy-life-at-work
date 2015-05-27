@@ -6,5 +6,7 @@ use File::Basename;
 push(@INC, dirname($0));
 require  "script-commons.pl";
 
+my $additionalParams = join(" ", @ARGV);
+
 clrscr();
-prompt("mvn -U -settings settings.xml clean install -DskipTests=true");
+prompt("mvn -U -settings settings.xml clean install -DskipTests=true $additionalParams");
